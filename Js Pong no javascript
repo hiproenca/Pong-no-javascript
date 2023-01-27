@@ -30,6 +30,12 @@ let trilha;
 
 let colidiu = false;
 
+function preload() {
+  trilha = loadSound("trilha.mp3");
+  raquetada = loadSound("raquetada.mp3");
+  ponto = loadSound("ponto.mp3");
+}
+
 function setup() {
   createCanvas(600, 400);
   trilha.loop();
@@ -42,14 +48,12 @@ function draw() {
   verificaColisaoBorda();
   mostraRaquete(xRaquete, yRaquete);
   movimentaMinhaRaquete();
-  verificaColisaoRaquete();
-  colisaoMinhaRaqueteBiblioteca();
+  verificaColisaoRaquete(xRaquete,yRaquete);
   mostraRaquete(xRaqueteOponente, yRaqueteOponente);
   movimentaRaqueteOponente();
-  colisaoRaqueteOponente();
+  verificaColisaoRaquete(xRaqueteOponente,yRaqueteOponente);
   incluiPlacar();
   marcaPonto();
-  //preload();
 }
 
 function mostraBolinha() {
@@ -85,21 +89,11 @@ function movimentaMinhaRaquete() {
   }
 }
 
-function verificaColisaoRaquete() {
-  if (
-    xBolinha - raio < xRaquete + raqueteComprimento &&
-    yBolinha - raio < yRaquete + raqueteAltura &&
-    yBolinha + raio > yRaquete
-  ) {
-    velocidadeXBolinha *= -1;
-    raquetada.play();
-  }
-}
 
-function colisaoMinhaRaqueteBiblioteca() {
+function verificaColisaoRaquete(x,y) {
   colidiu = collideRectCircle(
-    xRaquete,
-    yRaquete,
+    x,
+    y,
     raqueteComprimento,
     raqueteAltura,
     xBolinha,
@@ -108,6 +102,7 @@ function colisaoMinhaRaqueteBiblioteca() {
   );
   if (colidiu) {
     velocidadeXBolinha *= -1;
+    raquetada.play();
   }
 }
 
@@ -117,20 +112,6 @@ function movimentaRaqueteOponente() {
   yRaqueteOponente += velocidadeYOponente;
 }
 
-function colisaoRaqueteOponente() {
-  colidiu = collideRectCircle(
-    xRaqueteOponente,
-    yRaqueteOponente,
-    raqueteComprimento,
-    raqueteAltura,
-    xBolinha,
-    yBolinha,
-    raio
-  );
-  if (colidiu) {
-    velocidadeXBolinha *= -1;
-  }
-}
 
 function incluiPlacar() {
   stroke(255);
@@ -155,10 +136,4 @@ function marcaPonto() {
     pontosDoOponente += 1;
     ponto.play();
   }
-}
-
-function preload() {
-  trilha = loadSound("trilha.mp3");
-  raquetada = loadSound("raquetada.mp3");
-  ponto = loadSound("ponto.mp3");
 }
